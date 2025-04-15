@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Bill;
 
+use App\Actions\Bill\DeleteBillAction;
 use App\Actions\Bill\GetBillsAction;
 use App\Actions\Bill\StoreBillAction;
+use App\Actions\Bill\UpdateBillAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Bill\StoreBillRequest;
+use App\Http\Requests\Bill\UpdateBillRequest;
 use App\Models\Bill;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -35,7 +38,7 @@ class BillController extends Controller
      */
     public function store(StoreBillRequest $request, StoreBillAction $action)
     {
-        $response = $action->handle($request->validated());
+        $action->handle($request->validated());
 
         return back()->with('success', 'Bill created successfully');
     }
@@ -51,24 +54,31 @@ class BillController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Bill $bill)
+    public function edit()
     {
-        //
+
+       
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Bill $bill)
+    public function update(Bill $bill, UpdateBillRequest $request, UpdateBillAction $action)
     {
         //
+        $action->handle($bill, $request->validated());
+
+        return back()->with('success', 'Bill updated successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Bill $bill)
+    public function destroy(Bill $bill, DeleteBillAction $action)
     {
         //
+        $action->handle($bill);
+
+        return back()->with('success', 'Bill deleted successfully');
     }
 }

@@ -54,4 +54,9 @@ class Bill extends Model
     {
         return $this->belongsTo(Building::class);
     }
+
+    public function getRouteKeyName(): string
+    {
+        return 'id';
+    }
 }

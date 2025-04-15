@@ -11,11 +11,13 @@ import { Head, router } from '@inertiajs/vue3';
 import debounce from 'lodash/debounce';
 import { MoreVertical, Plus } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
+import BillDetailsModal from './partial/BillDetailsModal.vue';
 import StoreBillModal from './partial/StoreBillModal.vue';
+import UpdateBillModal from './partial/UpdateBillModal.vue';
 
 interface Bill {
     id: string;
-    month: string;
+    month: number;
     usability: number;
     building: {
         id: string;
@@ -29,6 +31,14 @@ interface Bill {
     };
     created_at: string;
     total_amount: number;
+}
+
+interface BillToEdit {
+    id: string;
+    month: number;
+    building_id: string;
+    building_type: string;
+    usability: number;
 }
 
 const monthIndex: Record<number, string> = {
@@ -192,12 +202,28 @@ const formatCurrency = (amount: number) => {
     }).format(amount);
 };
 
+// Add this ref for view modal visibility
+const showViewModal = ref(false);
+const selectedBill = ref<Bill | null>(null);
+
 const viewBillDetails = (bill: Bill) => {
-    console.log('View bill details:', bill);
+    selectedBill.value = bill;
+    showViewModal.value = true;
 };
 
+const showUpdateModal = ref(false);
+const billToEdit = ref<BillToEdit | null>(null);
+
 const editBill = (bill: Bill) => {
-    console.log('Edit bill:', bill);
+    billToEdit.value = {
+        id: bill.id,
+        month: Number(bill.month),
+        building_id: bill.building.id,
+        building_type: bill.building.building_type,
+        usability: Number(bill.usability),
+    };
+
+    showUpdateModal.value = true;
 };
 
 const deleteBill = (bill: Bill) => {
@@ -303,10 +329,12 @@ const clearFilters = () => {
                         <div class="flex items-center gap-4">
                             <Input v-model="searchQuery" placeholder="Search bills..." class="w-[300px]" />
 
-                            <!-- <select
+                            <!-- //ShadCn Select Not Working -->
+
+                            <select
                                 v-model="selectedBuildingType"
                                 @change="handleBuildingTypeChange($event?.target?.value || '')"
-                                class="rounded-md border px-3 py-2"
+                                class="border-input bg-background ring-offset-background focus:ring-ring h-9 w-[140px] rounded-md border px-2.5 py-1.5 text-sm focus:ring-1 focus:ring-offset-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <option v-for="type in buildingTypes" :key="type.value" :value="type.value">
                                     {{ type.label }}
@@ -316,7 +344,7 @@ const clearFilters = () => {
                             <select
                                 v-model="selectedMonth"
                                 @change="handleMonthChange($event?.target?.value || '')"
-                                class="rounded-md border px-3 py-2"
+                                class="border-input bg-background ring-offset-background focus:ring-ring h-9 w-[140px] rounded-md border px-2.5 py-1.5 text-sm focus:ring-1 focus:ring-offset-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <option v-for="month in months" :key="month.value" :value="month.value">
                                     {{ month.label }}
@@ -326,12 +354,12 @@ const clearFilters = () => {
                             <select
                                 v-model="selectedState"
                                 @change="handleStateChange($event?.target?.value || '')"
-                                class="rounded-md border px-3 py-2"
+                                class="border-input bg-background ring-offset-background focus:ring-ring h-9 w-[140px] rounded-md border px-2.5 py-1.5 text-sm focus:ring-1 focus:ring-offset-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <option v-for="state in states" :key="state.value" :value="state.value">
                                     {{ state.label }}
                                 </option>
-                            </select> -->
+                            </select>
                         </div>
                         <div class="flex items-center gap-4">
                             <Button variant="outline" @click="clearFilters"> Clear Filters </Button>
@@ -417,5 +445,7 @@ const clearFilters = () => {
 
         <!-- Add the modal component to your template (near the end, before </AppLayout>) -->
         <StoreBillModal v-model:show="showCreateModal" />
+        <BillDetailsModal v-model:show="showViewModal" :bill="selectedBill" />
+        <UpdateBillModal v-model:show="showUpdateModal" :bill="billToEdit" />
     </AppLayout>
 </template>

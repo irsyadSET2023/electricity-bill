@@ -33,7 +33,7 @@ const handleConfirm = () => {
             </DialogHeader>
             <DialogFooter>
                 <Button variant="outline" @click="handleOpenChange(false)">Cancel</Button>
-                <Button @click="handleConfirm">Create Bill</Button>
+                <Button @click="handleConfirm">Confirm</Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>

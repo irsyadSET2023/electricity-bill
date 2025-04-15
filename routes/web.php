@@ -27,6 +27,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::group(['prefix' => 'bills'], function () {
         Route::get('/', [BillController::class, 'index'])->name('bills');
         Route::post('/', [BillController::class, 'store'])->name('bills.store');
+        Route::put('/{bill}', [BillController::class, 'update'])->name('bills.update');
     });
 
 });

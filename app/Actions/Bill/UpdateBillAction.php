@@ -5,16 +5,15 @@ namespace App\Actions\Bill;
 use App\Models\Bill;
 use Illuminate\Support\Facades\Log;
 
-final class StoreBillAction
+final class UpdateBillAction
 {
-    public function handle(array $data): void
+    public function handle(Bill $bill, array $data): void
     {
+        // Will have better error handling
         try {
-            Bill::create($data);
-
+            $bill->update($data);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
-
         }
     }
 }
