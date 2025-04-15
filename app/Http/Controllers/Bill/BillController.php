@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Bill;
 use App\Actions\Bill\GetBillsAction;
 use App\Actions\Bill\StoreBillAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Bill\StoreBillRequest;
 use App\Models\Bill;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -32,7 +33,7 @@ class BillController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, StoreBillAction $action)
+    public function store(StoreBillRequest $request, StoreBillAction $action)
     {
         $response = $action->handle($request->validate());
         return Inertia::render('bill/Index', $response);

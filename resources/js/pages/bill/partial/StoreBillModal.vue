@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { toTypedSchema } from '@vee-validate/zod';
-import { useForm } from 'vee-validate';
+
+import { useForm } from '@inertiajs/vue3';
+import { useForm as useVeeForm } from 'vee-validate';
 import { onMounted, ref } from 'vue';
 import * as z from 'zod';
 
@@ -10,7 +12,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'vue-sonner';
-
+import StoreBillConfirmDialog from './StoreBillConfirmDialog.vue';
 const props = defineProps<{
     show: boolean;
 }>();
@@ -19,24 +21,26 @@ const emit = defineEmits<{
     'update:show': [value: boolean];
 }>();
 
+const showConfirmDialog = ref(false);
+
 const months = [
-    { value: '1', label: 'January' },
-    { value: '2', label: 'February' },
-    { value: '3', label: 'March' },
-    { value: '4', label: 'April' },
-    { value: '5', label: 'May' },
-    { value: '6', label: 'June' },
-    { value: '7', label: 'July' },
-    { value: '8', label: 'August' },
-    { value: '9', label: 'September' },
-    { value: '10', label: 'October' },
-    { value: '11', label: 'November' },
-    { value: '12', label: 'December' },
+    { value: 1, label: 'January' },
+    { value: 2, label: 'February' },
+    { value: 3, label: 'March' },
+    { value: 4, label: 'April' },
+    { value: 5, label: 'May' },
+    { value: 6, label: 'June' },
+    { value: 7, label: 'July' },
+    { value: 8, label: 'August' },
+    { value: 9, label: 'September' },
+    { value: 10, label: 'October' },
+    { value: 11, label: 'November' },
+    { value: 12, label: 'December' },
 ];
 
 const formSchema = toTypedSchema(
     z.object({
-        month: z.string().min(1, 'Month is required'),
+        month: z.number().min(1, 'Month is required'),
         building_id: z.string().min(1, 'Building is required'),
         usability: z
             .number()
@@ -45,14 +49,59 @@ const formSchema = toTypedSchema(
     }),
 );
 
-const form = useForm({
+const { handleSubmit, setFieldError, resetField, defineField, setFieldValue } = useVeeForm({
     validationSchema: formSchema,
     initialValues: {
-        month: '',
+        month: 1,
         building_id: '',
-        usability: '',
+        usability: 0,
     },
 });
+
+const form = useForm({
+    month: '',
+    building_id: '',
+    usability: 0,
+});
+
+const onSubmit = handleSubmit(() => {
+    showConfirmDialog.value = true;
+});
+
+const handleConfirmedSubmit = () => {
+    // Close the dialog
+    showConfirmDialog.value = false;
+
+    form.month = form.month;
+    form.building_id = form.building_id;
+    form.usability = form.usability;
+
+    // Submit the form
+    form.post(route('bills.store'), {
+        preserveScroll: true,
+
+        onSuccess: (response) => {
+            console.log('Success Response', response);
+            if (response?.props?.success) {
+                toast({
+                    title: 'Success',
+                    description: 'Bill created successfully',
+                    duration: 3000,
+                });
+                onClose(); // Close the modal after successful submission
+            }
+        },
+        onError: (errors) => {
+            console.log('Errors', errors);
+            toast({
+                title: 'Error',
+                description: 'Please check the form for errors',
+                variant: 'destructive',
+                duration: 3000,
+            });
+        },
+    });
+};
 
 const isSubmitting = ref(false);
 
@@ -72,43 +121,21 @@ onMounted(() => {
     fetchBuildings();
 });
 
-console.log(form.errors);
-
-const onSubmit = form.handleSubmit(async (values) => {
-    try {
-        isSubmitting.value = true;
-        await fetch('/bills', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(values),
-        });
-        emit('update:show', false);
-        form.resetForm();
-    } catch (error) {
-        console.error('Error submitting form:', error);
-        toast.error('Error submitting form');
-    } finally {
-        isSubmitting.value = false;
-        toast.success('Bill created successfully');
-    }
-});
-
 const onClose = () => {
     emit('update:show', false);
-    form.resetForm();
+    form.reset();
 };
 </script>
 
 <template>
+    <StoreBillConfirmDialog :open="showConfirmDialog" @confirm="handleConfirmedSubmit" />
     <Dialog :open="show" @update:open="onClose">
         <DialogContent class="sm:max-w-[425px]">
             <DialogHeader>
                 <DialogTitle>Create New Bill</DialogTitle>
             </DialogHeader>
 
-            <form @submit="onSubmit">
+            <form @submit.prevent="onSubmit">
                 <div class="grid gap-4 py-4">
                     <FormField v-slot="{ componentField }" name="month">
                         <FormItem>
