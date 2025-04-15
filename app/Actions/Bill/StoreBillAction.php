@@ -10,6 +10,9 @@ final class StoreBillAction
     public function handle(array $data): void
     {
         try {
+            activity()->log('Bill created', [
+                'bill' => $data,
+            ])->log($data['building_id'] . ' Bill created')->causedBy(auth()->user());
             Bill::create($data);
 
         } catch (\Throwable $th) {

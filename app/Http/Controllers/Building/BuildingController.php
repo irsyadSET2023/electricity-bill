@@ -80,6 +80,7 @@ class BuildingController extends Controller
     {
         //
         $action->handle($building);
+
         return back()->with('success', 'Building deleted successfully');
     }
 }

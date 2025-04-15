@@ -11,6 +11,11 @@ final class UpdateBillAction
     {
         // Will have better error handling
         try {
+            activity()
+            ->performedOn($bill)
+            ->causedBy(auth()->user())
+            ->withProperties(['data' => $data])
+            ->log('Bill updated');
             $bill->update($data);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());

@@ -11,6 +11,10 @@ final class DeleteBillAction
     {
         // Will have better error handling
         try {
+            activity()
+            ->performedOn($bill)
+            ->causedBy(auth()->user())
+            ->log('Bill deleted');
             $bill->delete();
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
