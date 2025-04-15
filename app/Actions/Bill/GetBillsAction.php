@@ -25,7 +25,8 @@ final class GetBillsAction
             $query->where(function ($q) use ($search) {
                 $q->where('bills.month', 'like', "%{$search}%")
                     ->orWhereHas('building', function ($buildingQuery) use ($search) {
-                        $buildingQuery->where('name', 'like', "%{$search}%");
+                        $buildingQuery->where('name', 'like', "%{$search}%")
+                            ->orWhere('state', 'like', "%{$search}%");
                     })
                     ->orWhereHas('building.user', function ($userQuery) use ($search) {
                         $userQuery->where('name', 'like', "%{$search}%")
@@ -33,6 +34,26 @@ final class GetBillsAction
                     });
             });
         }
+
+        // Add building type filter
+        if ($buildingType = $request->input('building_type')) {
+            $query->whereHas('building', function ($q) use ($buildingType) {
+                $q->where('building_type', $buildingType);
+            });
+        }
+
+        // Add month filter
+        if ($month = $request->input('month')) {
+            $query->where('month', $month);
+        }
+
+        // Add state filter
+        if ($state = $request->input('state')) {
+            $query->whereHas('building', function ($q) use ($state) {
+                $q->where('state', $state);
+            });
+        }
+
         $sortField = '';
         $sortOrder = '';
         if ($request->input('sort_by')) {
@@ -68,7 +89,10 @@ final class GetBillsAction
             'filters' => [
                 'search' => $search,
                 'sort_by' => $sortField,
-                'sort_order' => $sortOrder
+                'sort_order' => $sortOrder,
+                'building_type' => $request->input('building_type', ''),
+                'month' => $request->input('month', ''),
+                'state' => $request->input('state', '')
             ]
         ];
     }

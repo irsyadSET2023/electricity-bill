@@ -63,6 +63,9 @@ interface Props {
         search: string;
         sort_by: string;
         sort_order: string;
+        building_type: string;
+        month: string;
+        state: string;
     };
 }
 
@@ -78,6 +81,46 @@ const breadcrumbs: BreadcrumbItem[] = [
 const searchQuery = ref(props.filters.search || '');
 const sortBy = ref(props.filters.sort_by || '');
 const sortOrder = ref(props.filters.sort_order || '');
+const selectedBuildingType = ref(props.filters.building_type || '');
+const selectedMonth = ref(props.filters.month || '');
+const selectedState = ref(props.filters.state || '');
+
+// Add building types array
+const buildingTypes = [
+    { value: '', label: 'All Types' },
+    { value: 'Resedential', label: 'Resedential' },
+    { value: 'Commercial', label: 'Commercial' },
+];
+
+// Add months array from the existing monthIndex
+const months = [
+    { value: '', label: 'All Months' },
+    ...Object.entries(monthIndex).map(([value, label]) => ({
+        value: value.toString(),
+        label,
+    })),
+];
+
+// Add states array after buildingTypes array
+const states = [
+    { value: '', label: 'All States' },
+    { value: 'Johor', label: 'Johor' },
+    { value: 'Kedah', label: 'Kedah' },
+    { value: 'Kelantan', label: 'Kelantan' },
+    { value: 'Melaka', label: 'Melaka' },
+    { value: 'Negeri Sembilan', label: 'Negeri Sembilan' },
+    { value: 'Pahang', label: 'Pahang' },
+    { value: 'Pulau Pinang', label: 'Penang' },
+    { value: 'Perak', label: 'Perak' },
+    { value: 'Perlis', label: 'Perlis' },
+    { value: 'Sabah', label: 'Sabah' },
+    { value: 'Sarawak', label: 'Sarawak' },
+    { value: 'Selangor', label: 'Selangor' },
+    { value: 'Terengganu', label: 'Terengganu' },
+    { value: 'Kuala Lumpur', label: 'Kuala Lumpur' },
+    { value: 'Labuan', label: 'Labuan' },
+    { value: 'Putrajaya', label: 'Putrajaya' },
+];
 
 // Debounced search function
 const debouncedSearch = debounce((value: string) => {
@@ -87,9 +130,12 @@ const debouncedSearch = debounce((value: string) => {
             search: value,
             sort_by: sortBy.value,
             sort_order: sortOrder.value,
+            building_type: selectedBuildingType.value,
+            month: selectedMonth.value,
+            state: selectedState.value,
         },
         {
-            preserveState: true,
+            preserveState: false,
             preserveScroll: true,
             replace: true,
         },
@@ -163,6 +209,84 @@ const totalPages = computed(() => props.bills.last_page);
 
 // Add this ref for modal visibility
 const showCreateModal = ref(false);
+
+// Add handlers for filter changes
+const handleBuildingTypeChange = (value: string) => {
+    selectedBuildingType.value = value;
+    router.get(
+        '/bills',
+        {
+            search: searchQuery.value,
+            sort_by: sortBy.value,
+            sort_order: sortOrder.value,
+            building_type: value,
+            month: selectedMonth.value,
+            state: selectedState.value,
+        },
+        {
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
+};
+
+const handleMonthChange = (value: string) => {
+    selectedMonth.value = value;
+    router.get(
+        '/bills',
+        {
+            search: searchQuery.value,
+            sort_by: sortBy.value,
+            sort_order: sortOrder.value,
+            building_type: selectedBuildingType.value,
+            month: value,
+            state: selectedState.value,
+        },
+        {
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
+};
+
+// Add handler for state changes
+const handleStateChange = (value: string) => {
+    selectedState.value = value;
+    router.get(
+        '/bills',
+        {
+            search: searchQuery.value,
+            sort_by: sortBy.value,
+            sort_order: sortOrder.value,
+            building_type: selectedBuildingType.value,
+            month: selectedMonth.value,
+            state: value,
+        },
+        {
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
+};
+
+// Update the clearFilters function to include state
+const clearFilters = () => {
+    searchQuery.value = '';
+    sortBy.value = '';
+    sortOrder.value = '';
+    selectedBuildingType.value = '';
+    selectedMonth.value = '';
+    selectedState.value = '';
+
+    router.get(
+        '/bills',
+        {},
+        {
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
+};
 </script>
 
 <template>
@@ -178,8 +302,39 @@ const showCreateModal = ref(false);
                     <div class="mb-4 flex items-center justify-between">
                         <div class="flex items-center gap-4">
                             <Input v-model="searchQuery" placeholder="Search bills..." class="w-[300px]" />
+
+                            <!-- <select
+                                v-model="selectedBuildingType"
+                                @change="handleBuildingTypeChange($event?.target?.value || '')"
+                                class="rounded-md border px-3 py-2"
+                            >
+                                <option v-for="type in buildingTypes" :key="type.value" :value="type.value">
+                                    {{ type.label }}
+                                </option>
+                            </select>
+
+                            <select
+                                v-model="selectedMonth"
+                                @change="handleMonthChange($event?.target?.value || '')"
+                                class="rounded-md border px-3 py-2"
+                            >
+                                <option v-for="month in months" :key="month.value" :value="month.value">
+                                    {{ month.label }}
+                                </option>
+                            </select>
+
+                            <select
+                                v-model="selectedState"
+                                @change="handleStateChange($event?.target?.value || '')"
+                                class="rounded-md border px-3 py-2"
+                            >
+                                <option v-for="state in states" :key="state.value" :value="state.value">
+                                    {{ state.label }}
+                                </option>
+                            </select> -->
                         </div>
                         <div class="flex items-center gap-4">
+                            <Button variant="outline" @click="clearFilters"> Clear Filters </Button>
                             <Button @click="showCreateModal = true">
                                 <Plus />
                                 Add Bill
