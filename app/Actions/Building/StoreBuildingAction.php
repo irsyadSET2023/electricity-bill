@@ -1,30 +1,19 @@
 <?php
 
-namespace App\Actions\User;
+namespace App\Actions\Building;
 
 use App\Models\Building;
+use Illuminate\Support\Facades\Log;
 
 final class StoreBuildingAction
 {
-    public function handle(array $data): array
+    public function handle(array $data): void
     {
         try {
             Building::create($data);
-            return
-                ["status_code" => 200, "data" => [
-                    'success' => true,
-                    'message' => 'Building Create Successfully',
-                    'data' => null
-                ]];
         } catch (\Throwable $th) {
-            return [
-                "status_code" => 500,
-                "data" => [
-                    'success' => false,
-                    'message' => $th->getMessage(),
-                    'data' => null
-                ]
-            ];
+            Log::error($th->getMessage());
+   
         }
     }
 }

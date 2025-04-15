@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 class SimpleBuildingController extends Controller
 {
     //
+    //Will Implement pagination later
 
     public function __invoke()
     {

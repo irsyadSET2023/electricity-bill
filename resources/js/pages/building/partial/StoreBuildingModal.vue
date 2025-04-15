@@ -7,7 +7,6 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'vue-sonner';
-import ConfirmDialog from './ConfirmDialog.vue';
 
 const props = defineProps<{
     show: boolean;
@@ -17,46 +16,73 @@ const emit = defineEmits<{
     'update:show': [value: boolean];
 }>();
 
-const showConfirmDialog = ref(false);
-
-const months = [
-    { value: 1, label: 'January' },
-    { value: 2, label: 'February' },
-    { value: 3, label: 'March' },
-    { value: 4, label: 'April' },
-    { value: 5, label: 'May' },
-    { value: 6, label: 'June' },
-    { value: 7, label: 'July' },
-    { value: 8, label: 'August' },
-    { value: 9, label: 'September' },
-    { value: 10, label: 'October' },
-    { value: 11, label: 'November' },
-    { value: 12, label: 'December' },
-];
-
 const buildingTypes = [
-    { value: 'Residential', label: 'Residential' },
+    { value: 'Resedential', label: 'Resedential' },
     { value: 'Commercial', label: 'Commercial' },
 ];
 
+const states = [
+    { value: 'Johor', label: 'Johor' },
+    { value: 'Kedah', label: 'Kedah' },
+    { value: 'Kelantan', label: 'Kelantan' },
+    { value: 'Melaka', label: 'Melaka' },
+    { value: 'Negeri Sembilan', label: 'Negeri Sembilan' },
+    { value: 'Pahang', label: 'Pahang' },
+    { value: 'Perak', label: 'Perak' },
+    { value: 'Perlis', label: 'Perlis' },
+    { value: 'Pulau Pinang', label: 'Pulau Pinang' },
+    { value: 'Sabah', label: 'Sabah' },
+    { value: 'Sarawak', label: 'Sarawak' },
+    { value: 'Selangor', label: 'Selangor' },
+    { value: 'Terengganu', label: 'Terengganu' },
+    { value: 'Kuala Lumpur', label: 'Kuala Lumpur' },
+    { value: 'Labuan', label: 'Labuan' },
+    { value: 'Putrajaya', label: 'Putrajaya' },
+];
+
+// Add interface for User type
+interface User {
+    id: number;
+    name: string;
+}
+
+// Add users ref
+const users = ref<User[]>([]);
+
 const form = useForm({
-    month: 1,
-    building_id: '',
+    name: '',
     building_type: '',
-    usability: 0,
+    state: '',
+    user_id: '', // Add user_id field
+});
+
+// Add function to fetch users
+const fetchUsers = async () => {
+    try {
+        const response = await fetch(route('users.simple'));
+        users.value = await response.json();
+    } catch (error) {
+        toast({
+            title: 'Error',
+            description: 'Failed to fetch users',
+            variant: 'destructive',
+            duration: 3000,
+        });
+    }
+};
+
+// Call fetchUsers when component mounts
+onMounted(() => {
+    fetchUsers();
 });
 
 const onSubmit = () => {
-    showConfirmDialog.value = true;
-};
-
-const handleConfirmedSubmit = () => {
-    form.post(route('bills.store'), {
+    form.post(route('buildings.store'), {
         preserveScroll: true,
         onSuccess: () => {
             toast({
                 title: 'Success',
-                description: 'Bill created successfully',
+                description: 'Building created successfully',
                 duration: 3000,
             });
             onClose();
@@ -72,52 +98,39 @@ const handleConfirmedSubmit = () => {
     });
 };
 
-const isSubmitting = ref(false);
-const buildings = ref<{ id: string; name: string }[]>([]);
-
-const fetchBuildings = async () => {
-    try {
-        const response = await fetch('/buildings/simple');
-        const data = await response.json();
-        buildings.value = data;
-    } catch (error) {
-        console.error('Error fetching buildings:', error);
-    }
-};
-
-onMounted(() => {
-    fetchBuildings();
-});
-
 const onClose = () => {
     emit('update:show', false);
     form.reset();
-    isSubmitting.value = false;
 };
 </script>
 
 <template>
-    <ConfirmDialog :open="showConfirmDialog" @update:open="showConfirmDialog = $event" @confirm="handleConfirmedSubmit" />
     <Dialog :open="show" @update:open="onClose">
         <DialogContent class="sm:max-w-[425px]">
             <DialogHeader>
-                <DialogTitle>Create New Bill</DialogTitle>
+                <DialogTitle>Create New Building</DialogTitle>
             </DialogHeader>
 
             <form @submit.prevent="onSubmit" class="space-y-4">
                 <div class="space-y-2">
-                    <label class="block text-sm font-medium">Month</label>
-                    <Select v-model="form.month">
+                    <label class="block text-sm font-medium">Building Name</label>
+                    <Input type="text" placeholder="Enter building name" v-model="form.name" />
+                    <div v-if="form.errors.name" class="text-sm text-red-500">{{ form.errors.name }}</div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium">Assign User</label>
+                    <Select v-model="form.user_id">
                         <SelectTrigger>
-                            <SelectValue placeholder="Select month" />
+                            <SelectValue placeholder="Select user" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem v-for="month in months" :key="month.value" :value="month.value">
-                                {{ month.label }}
+                            <SelectItem v-for="user in users" :key="user.id" :value="user.id.toString()">
+                                {{ user.name }}
                             </SelectItem>
                         </SelectContent>
                     </Select>
-                    <div v-if="form.errors.month" class="text-sm text-red-500">{{ form.errors.month }}</div>
+                    <div v-if="form.errors.user_id" class="text-sm text-red-500">{{ form.errors.user_id }}</div>
                 </div>
 
                 <div class="space-y-2">
@@ -136,30 +149,24 @@ const onClose = () => {
                 </div>
 
                 <div class="space-y-2">
-                    <label class="block text-sm font-medium">Building</label>
-                    <Select v-model="form.building_id">
+                    <label class="block text-sm font-medium">State</label>
+                    <Select v-model="form.state">
                         <SelectTrigger>
-                            <SelectValue placeholder="Select building" />
+                            <SelectValue placeholder="Select state" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem v-for="building in buildings" :key="building.id" :value="building.id">
-                                {{ building.name }}
+                            <SelectItem v-for="state in states" :key="state.value" :value="state.value">
+                                {{ state.label }}
                             </SelectItem>
                         </SelectContent>
                     </Select>
-                    <div v-if="form.errors.building_id" class="text-sm text-red-500">{{ form.errors.building_id }}</div>
-                </div>
-
-                <div class="space-y-2">
-                    <label class="block text-sm font-medium">Usability (kWh)</label>
-                    <Input type="number" step="0.01" min="0" placeholder="Enter usability in kWh" v-model="form.usability" />
-                    <div v-if="form.errors.usability" class="text-sm text-red-500">{{ form.errors.usability }}</div>
+                    <div v-if="form.errors.state" class="text-sm text-red-500">{{ form.errors.state }}</div>
                 </div>
 
                 <DialogFooter>
                     <Button type="button" variant="outline" @click="onClose" :disabled="form.processing"> Cancel </Button>
                     <Button type="submit" :disabled="form.processing">
-                        {{ form.processing ? 'Creating...' : 'Create Bill' }}
+                        {{ form.processing ? 'Creating...' : 'Create Building' }}
                     </Button>
                 </DialogFooter>
             </form>

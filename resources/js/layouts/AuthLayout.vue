@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AuthLayout from '@/layouts/auth/AuthSimpleLayout.vue';
-
+import { Toaster } from 'vue-sonner';
 defineProps<{
     title?: string;
     description?: string;
@@ -9,6 +9,7 @@ defineProps<{
 
 <template>
     <AuthLayout :title="title" :description="description">
+        <Toaster />
         <slot />
     </AuthLayout>
 </template>

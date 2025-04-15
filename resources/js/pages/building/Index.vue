@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
@@ -8,8 +9,10 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import debounce from 'lodash/debounce';
-import { MoreVerticalIcon } from 'lucide-vue-next';
+import { MoreVerticalIcon, Plus } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
+import BuildingDetailsModal from './partial/BuildingDetailsModal.vue';
+import StoreBuildingModal from './partial/StoreBuildingModal.vue';
 
 interface Building {
     id: string;
@@ -56,6 +59,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 const searchQuery = ref(props.filters.search || '');
 const sortBy = ref(props.filters.sort_by || 'name');
 const sortOrder = ref(props.filters.sort_order || 'asc');
+const showCreateModal = ref(false);
+const showDetailsModal = ref(false);
+const selectedBuilding = ref<Building | null>(null);
 
 // Debounced search function
 const debouncedSearch = debounce((value: string) => {
@@ -81,7 +87,8 @@ watch(searchQuery, (value) => {
 
 // Add these functions for handling building actions
 const viewBuildingDetails = (building: Building) => {
-    console.log('View building details:', building);
+    selectedBuilding.value = building;
+    showDetailsModal.value = true;
 };
 
 const editBuilding = (building: Building) => {
@@ -148,6 +155,13 @@ const totalPages = computed(() => props.buildings.last_page);
                     <div class="mb-4 flex items-center justify-between">
                         <div class="flex items-center gap-4">
                             <Input v-model="searchQuery" placeholder="Search buildings..." class="w-[300px]" />
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <Button @click="showCreateModal = true">
+                                <Plus />
+                                Add Building
+                            </Button>
                         </div>
                     </div>
 
@@ -227,4 +241,7 @@ const totalPages = computed(() => props.buildings.last_page);
             </Card>
         </div>
     </AppLayout>
+
+    <StoreBuildingModal v-model:show="showCreateModal" />
+    <BuildingDetailsModal v-model:show="showDetailsModal" :building="selectedBuilding" />
 </template>

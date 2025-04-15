@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import VPagination from '@/components/ui/pagination/VPagination.vue';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -8,7 +7,6 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import debounce from 'lodash/debounce';
-import { MoreVerticalIcon } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 
 interface User {
@@ -168,7 +166,7 @@ const totalPages = computed(() => props.users.last_page);
                                         </span>
                                     </TableHead>
 
-                                    <TableHead>Action</TableHead>
+                                    <!-- <TableHead>Action</TableHead> -->
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -176,7 +174,7 @@ const totalPages = computed(() => props.users.last_page);
                                     <TableCell>{{ user.name }}</TableCell>
                                     <TableCell>{{ user.email }}</TableCell>
 
-                                    <TableCell>
+                                    <!-- <TableCell>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger
                                                 class="hover:bg-muted flex h-8 w-8 items-center justify-center rounded-md border transition-colors"
@@ -191,7 +189,7 @@ const totalPages = computed(() => props.users.last_page);
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
-                                    </TableCell>
+                                    </TableCell> -->
                                 </TableRow>
                             </TableBody>
                         </Table>

@@ -11,7 +11,9 @@ import { Head, router } from '@inertiajs/vue3';
 import debounce from 'lodash/debounce';
 import { MoreVertical, Plus } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
+import { toast } from 'vue-sonner';
 import BillDetailsModal from './partial/BillDetailsModal.vue';
+import ConfirmDialog from './partial/ConfirmDialog.vue';
 import StoreBillModal from './partial/StoreBillModal.vue';
 import UpdateBillModal from './partial/UpdateBillModal.vue';
 
@@ -226,8 +228,27 @@ const editBill = (bill: Bill) => {
     showUpdateModal.value = true;
 };
 
-const deleteBill = (bill: Bill) => {
-    console.log('Delete bill:', bill);
+const showDeleteConfirm = ref(false);
+const billToDelete = ref<Bill | null>(null);
+
+const askDeleteBill = (bill: Bill) => {
+    billToDelete.value = bill;
+    showDeleteConfirm.value = true;
+};
+
+const confirmDeleteBill = () => {
+    if (!billToDelete.value) return;
+    router.delete(`/bills/${billToDelete.value.id}`, {
+        onFinish: () => {
+            showDeleteConfirm.value = false;
+            billToDelete.value = null;
+        },
+    });
+    toast({
+        title: 'Bill deleted successfully',
+        description: 'The bill has been deleted successfully',
+        duration: 3000,
+    });
 };
 
 // Computed properties
@@ -418,7 +439,7 @@ const clearFilters = () => {
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuItem @click="() => viewBillDetails(bill)"> View Details </DropdownMenuItem>
                                                 <DropdownMenuItem @click="() => editBill(bill)"> Edit Bill </DropdownMenuItem>
-                                                <DropdownMenuItem class="text-red-600" @click="() => deleteBill(bill)">
+                                                <DropdownMenuItem class="text-red-600" @click="() => askDeleteBill(bill)">
                                                     Delete Bill
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
@@ -447,5 +468,6 @@ const clearFilters = () => {
         <StoreBillModal v-model:show="showCreateModal" />
         <BillDetailsModal v-model:show="showViewModal" :bill="selectedBill" />
         <UpdateBillModal v-model:show="showUpdateModal" :bill="billToEdit" />
+        <ConfirmDialog :open="showDeleteConfirm" @update:open="showDeleteConfirm = $event" @confirm="confirmDeleteBill" />
     </AppLayout>
 </template>

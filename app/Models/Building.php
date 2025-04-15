@@ -52,6 +52,7 @@ class Building extends Model
         'name',
         'state',
         'building_type',
+        'user_id',
     ];
 
     public function user(): BelongsTo

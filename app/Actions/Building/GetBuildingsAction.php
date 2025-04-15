@@ -26,13 +26,16 @@ final class GetBuildingsAction
         }
 
         // Apply sorting
-        $sortField = $request->input('sort_by', 'name');
-        $sortOrder = $request->input('sort_order', 'asc');
+        $sortField = $request->input('sort_by', 'updated_at');
+        $sortOrder = $request->input('sort_order', 'desc');
         
         // Validate sort field to prevent SQL injection
         $allowedSortFields = ['name', 'building_type', 'state', 'created_at'];
         if (in_array($sortField, $allowedSortFields)) {
             $query->orderBy($sortField, $sortOrder);
+        }
+        else{
+            $query->orderBy('updated_at', 'desc');
         }
 
         // Get paginated results

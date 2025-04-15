@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Building;
 
 use App\Actions\Building\GetBuildingsAction;
-use App\Actions\User\StoreBuildingAction;
+use App\Actions\Building\StoreBuildingAction;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreBuildingRequest;
+use App\Http\Requests\Building\StoreBuildingRequest;
 use App\Models\Building;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -36,10 +36,11 @@ class BuildingController extends Controller
     {
         //
 
-        $storeBuildingData = $request->validate();
-        $response = $action->handle($storeBuildingData);
+        $storeBuildingData = $request->validated();
+        $action->handle($storeBuildingData);
+        return back()->with('success', 'Building created successfully');
 
-        return $this->sendSuccess($response['status_code'], $response['data']);
+      
     }
 
     /**
