@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Actions\User;
+namespace App\Actions\Bill;
 
-use App\Models\Building;
+use App\Models\Bill;
 
-final class StoreBuildingAction
+final class StoreBillAction
 {
     public function handle(array $data): array
     {
         try {
-            Building::create($data);
+            Bill::create($data);
             return
                 ["status_code" => 200, "data" => [
                     'success' => true,
-                    'message' => 'Building Create Successfully',
+                    'message' => 'Bill Create Successfully',
                     'data' => null
                 ]];
         } catch (\Throwable $th) {

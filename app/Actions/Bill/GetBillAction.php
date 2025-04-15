@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Actions\User;
+namespace App\Actions\Bill;
 
-use App\Models\Building;
+use App\Models\Bill;
 
-final class GetBuildingAction
+final class GetBillAction
 {
-    public function handle(string $buildingId): ?Building
+    public function handle(string $billId): ?Bill
     {
-        $building = Building::whereId($buildingId)->with('bills')->first();
+        $bill = Bill::whereId($billId)->with('building')->first();
 
-        return $building;
+        return $bill;
     }
 }

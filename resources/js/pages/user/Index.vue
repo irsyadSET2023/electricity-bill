@@ -167,12 +167,7 @@ const totalPages = computed(() => props.users.last_page);
                                             {{ sortOrder === 'asc' ? '↑' : '↓' }}
                                         </span>
                                     </TableHead>
-                                    <TableHead class="cursor-pointer" @click="handleSort('created_at')">
-                                        Registered Date
-                                        <span v-if="sortBy === 'created_at'" class="ml-2">
-                                            {{ sortOrder === 'asc' ? '↑' : '↓' }}
-                                        </span>
-                                    </TableHead>
+
                                     <TableHead>Action</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -181,9 +176,6 @@ const totalPages = computed(() => props.users.last_page);
                                     <TableCell>{{ user.name }}</TableCell>
                                     <TableCell>{{ user.email }}</TableCell>
 
-                                    <TableCell>
-                                        {{ new Date(user.created_at).toLocaleDateString() }}
-                                    </TableCell>
                                     <TableCell>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger

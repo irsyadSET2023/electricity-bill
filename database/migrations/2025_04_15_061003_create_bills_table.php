@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('bills', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->float('usability');
-            $table->enum('month', array_column(Month::cases(), 'value'));
+            $table->integer('month');
             $table->foreignUlid('building_id')->index();
             $table->timestamps();
             $table->softDeletes();

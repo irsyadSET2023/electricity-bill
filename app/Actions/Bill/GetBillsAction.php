@@ -35,13 +35,15 @@ final class GetBillsAction
         }
 
         // Apply sorting
-        $sortField = $request->input('sort_by', 'created_at');
-        $sortOrder = $request->input('sort_order', 'desc');
+        $sortField = $request->input('sort_by', 'month');
+        $sortOrder = $request->input('sort_order', 'asc');
         
         // Validate sort field to prevent SQL injection
         $allowedSortFields = ['month', 'usability', 'created_at'];
         if (in_array($sortField, $allowedSortFields)) {
             $query->orderBy($sortField, $sortOrder);
+        } else {
+            $query->orderBy('month', 'desc');
         }
 
         // Get paginated results

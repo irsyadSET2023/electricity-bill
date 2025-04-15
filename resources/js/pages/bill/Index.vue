@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
@@ -8,8 +9,9 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import debounce from 'lodash/debounce';
-import { MoreVertical } from 'lucide-vue-next';
+import { MoreVertical, Plus } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
+import StoreBillModal from './partial/StoreBillModal.vue';
 
 interface Bill {
     id: string;
@@ -155,8 +157,12 @@ const editBill = (bill: Bill) => {
 const deleteBill = (bill: Bill) => {
     console.log('Delete bill:', bill);
 };
+
 // Computed properties
 const totalPages = computed(() => props.bills.last_page);
+
+// Add this ref for modal visibility
+const showCreateModal = ref(false);
 </script>
 
 <template>
@@ -173,6 +179,12 @@ const totalPages = computed(() => props.bills.last_page);
                         <div class="flex items-center gap-4">
                             <Input v-model="searchQuery" placeholder="Search bills..." class="w-[300px]" />
                         </div>
+                        <div class="flex items-center gap-4">
+                            <Button @click="showCreateModal = true">
+                                <Plus />
+                                Add Bill
+                            </Button>
+                        </div>
                     </div>
 
                     <div class="rounded-md border">
@@ -180,7 +192,12 @@ const totalPages = computed(() => props.bills.last_page);
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Bill ID</TableHead>
-                                    <TableHead>Month</TableHead>
+                                    <TableHead @click="handleSort('month')">
+                                        Month
+                                        <span v-if="sortBy === 'month'" class="ml-2">
+                                            {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                                        </span>
+                                    </TableHead>
                                     <TableHead>Building</TableHead>
                                     <TableHead>Owner</TableHead>
 
@@ -242,5 +259,8 @@ const totalPages = computed(() => props.bills.last_page);
                 </CardContent>
             </Card>
         </div>
+
+        <!-- Add the modal component to your template (near the end, before </AppLayout>) -->
+        <StoreBillModal v-model:show="showCreateModal" />
     </AppLayout>
 </template>
