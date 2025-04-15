@@ -33,17 +33,14 @@ final class GetBillsAction
                     });
             });
         }
-
-        // Apply sorting
-        $sortField = $request->input('sort_by', 'month');
-        $sortOrder = $request->input('sort_order', 'asc');
-        
-        // Validate sort field to prevent SQL injection
-        $allowedSortFields = ['month', 'usability', 'created_at'];
-        if (in_array($sortField, $allowedSortFields)) {
-            $query->orderBy($sortField, $sortOrder);
+        $sortField = '';
+        $sortOrder = '';
+        if ($request->input('sort_by')) {
+            $sortField = $request->input('sort_by');
+            $sortOrder = $request->input('sort_order', 'desc');
+            $query->orderBy($request->input('sort_by'), $request->input('sort_order'));
         } else {
-            $query->orderBy('month', 'desc');
+            $query->orderBy('updated_at', 'desc');
         }
 
         // Get paginated results
@@ -64,6 +61,7 @@ final class GetBillsAction
                     'name' => $bill->building->user->name,
                     'email' => $bill->building->user->email,
                 ],
+                'updated_at' => $bill->updated_at,
                 'created_at' => $bill->created_at,
                 'total_amount' => $this->calculateBillAmount($bill->usability, $bill->building->building_type),
             ]),

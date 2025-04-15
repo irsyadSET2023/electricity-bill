@@ -46,6 +46,8 @@ class Bill extends Model
         'name',
         'month',
         'usability',
+        'building_type',
+        'building_id',
     ];
 
     public function building(): BelongsTo

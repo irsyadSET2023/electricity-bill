@@ -76,8 +76,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const searchQuery = ref(props.filters.search || '');
-const sortBy = ref(props.filters.sort_by || 'created_at');
-const sortOrder = ref(props.filters.sort_order || 'desc');
+const sortBy = ref(props.filters.sort_by || '');
+const sortOrder = ref(props.filters.sort_order || '');
 
 // Debounced search function
 const debouncedSearch = debounce((value: string) => {

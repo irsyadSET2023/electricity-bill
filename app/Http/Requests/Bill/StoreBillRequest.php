@@ -24,7 +24,7 @@ class StoreBillRequest extends FormRequest
         return [
             'month' => 'required|integer|min:1|max:12',
             'usability' => 'required|numeric|min:0',
-            'building_id' => 'required|uuid|exists:buildings,id',
+            'building_id' => 'required|ulid|exists:buildings,id',
         ];
     }
 }

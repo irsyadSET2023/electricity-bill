@@ -29,6 +29,7 @@ class StoreBuildingRequest extends FormRequest
             'state' => ['required', new Enum(State::class)],
             'building_type' => ['required', new Enum(BuildingType::class)],
             'user_id' => ['required', 'exists:users,id'],
+            'building_id' => ['required', 'exists:buildings,id'],
         ];
     }
 }

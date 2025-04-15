@@ -3,6 +3,7 @@
 namespace App\Actions\Bill;
 
 use App\Models\Bill;
+use Illuminate\Support\Facades\Log;
 
 final class StoreBillAction
 {
@@ -17,6 +18,7 @@ final class StoreBillAction
                     'data' => null
                 ]];
         } catch (\Throwable $th) {
+            Log::error($th->getMessage());
             return [
                 "status_code" => 500,
                 "data" => [

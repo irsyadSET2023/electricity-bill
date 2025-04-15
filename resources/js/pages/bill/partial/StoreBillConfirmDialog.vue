@@ -17,6 +17,11 @@ const emit = defineEmits<Emits>();
 const handleOpenChange = (value: boolean) => {
     emit('update:open', value);
 };
+
+const handleConfirm = () => {
+    emit('confirm');
+    emit('update:open', false);
+};
 </script>
 
 <template>
@@ -28,7 +33,7 @@ const handleOpenChange = (value: boolean) => {
             </DialogHeader>
             <DialogFooter>
                 <Button variant="outline" @click="handleOpenChange(false)">Cancel</Button>
-                <Button @click="emit('confirm')">Create Bill</Button>
+                <Button @click="handleConfirm">Create Bill</Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>

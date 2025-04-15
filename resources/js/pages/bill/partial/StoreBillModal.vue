@@ -1,18 +1,14 @@
 <script setup lang="ts">
-import { toTypedSchema } from '@vee-validate/zod';
-
 import { useForm } from '@inertiajs/vue3';
-import { useForm as useVeeForm } from 'vee-validate';
 import { onMounted, ref } from 'vue';
-import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'vue-sonner';
 import StoreBillConfirmDialog from './StoreBillConfirmDialog.vue';
+
 const props = defineProps<{
     show: boolean;
 }>();
@@ -38,61 +34,34 @@ const months = [
     { value: 12, label: 'December' },
 ];
 
-const formSchema = toTypedSchema(
-    z.object({
-        month: z.number().min(1, 'Month is required'),
-        building_id: z.string().min(1, 'Building is required'),
-        usability: z
-            .number()
-            .min(1, 'Usability is required')
-            .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, 'Must be a positive number'),
-    }),
-);
-
-const { handleSubmit, setFieldError, resetField, defineField, setFieldValue } = useVeeForm({
-    validationSchema: formSchema,
-    initialValues: {
-        month: 1,
-        building_id: '',
-        usability: 0,
-    },
-});
+const buildingTypes = [
+    { value: 'Residential', label: 'Residential' },
+    { value: 'Commercial', label: 'Commercial' },
+];
 
 const form = useForm({
-    month: '',
+    month: 1,
     building_id: '',
+    building_type: '',
     usability: 0,
 });
 
-const onSubmit = handleSubmit(() => {
+const onSubmit = () => {
     showConfirmDialog.value = true;
-});
+};
 
 const handleConfirmedSubmit = () => {
-    // Close the dialog
-    showConfirmDialog.value = false;
-
-    form.month = form.month;
-    form.building_id = form.building_id;
-    form.usability = form.usability;
-
-    // Submit the form
     form.post(route('bills.store'), {
         preserveScroll: true,
-
-        onSuccess: (response) => {
-            console.log('Success Response', response);
-            if (response?.props?.success) {
-                toast({
-                    title: 'Success',
-                    description: 'Bill created successfully',
-                    duration: 3000,
-                });
-                onClose(); // Close the modal after successful submission
-            }
+        onSuccess: () => {
+            toast({
+                title: 'Success',
+                description: 'Bill created successfully',
+                duration: 3000,
+            });
+            onClose();
         },
         onError: (errors) => {
-            console.log('Errors', errors);
             toast({
                 title: 'Error',
                 description: 'Please check the form for errors',
@@ -104,7 +73,6 @@ const handleConfirmedSubmit = () => {
 };
 
 const isSubmitting = ref(false);
-
 const buildings = ref<{ id: string; name: string }[]>([]);
 
 const fetchBuildings = async () => {
@@ -124,72 +92,74 @@ onMounted(() => {
 const onClose = () => {
     emit('update:show', false);
     form.reset();
+    isSubmitting.value = false;
 };
 </script>
 
 <template>
-    <StoreBillConfirmDialog :open="showConfirmDialog" @confirm="handleConfirmedSubmit" />
+    <StoreBillConfirmDialog :open="showConfirmDialog" @update:open="showConfirmDialog = $event" @confirm="handleConfirmedSubmit" />
     <Dialog :open="show" @update:open="onClose">
         <DialogContent class="sm:max-w-[425px]">
             <DialogHeader>
                 <DialogTitle>Create New Bill</DialogTitle>
             </DialogHeader>
 
-            <form @submit.prevent="onSubmit">
-                <div class="grid gap-4 py-4">
-                    <FormField v-slot="{ componentField }" name="month">
-                        <FormItem>
-                            <FormLabel>Month</FormLabel>
-                            <Select v-bind="componentField">
-                                <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select month" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    <SelectItem v-for="month in months" :key="month.value" :value="month.value">
-                                        {{ month.label }}
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
-                            <FormMessage />
-                        </FormItem>
-                    </FormField>
+            <form @submit.prevent="onSubmit" class="space-y-4">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium">Month</label>
+                    <Select v-model="form.month">
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select month" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem v-for="month in months" :key="month.value" :value="month.value">
+                                {{ month.label }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <div v-if="form.errors.month" class="text-sm text-red-500">{{ form.errors.month }}</div>
+                </div>
 
-                    <FormField v-slot="{ componentField }" name="building_id">
-                        <FormItem>
-                            <FormLabel>Building</FormLabel>
-                            <Select v-bind="componentField">
-                                <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select building" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    <SelectItem v-for="building in buildings" :key="building.id" :value="building.id">
-                                        {{ building.name }}
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
-                            <FormMessage />
-                        </FormItem>
-                    </FormField>
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium">Building Type</label>
+                    <Select v-model="form.building_type">
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select building type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem v-for="type in buildingTypes" :key="type.value" :value="type.value">
+                                {{ type.label }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <div v-if="form.errors.building_type" class="text-sm text-red-500">{{ form.errors.building_type }}</div>
+                </div>
 
-                    <FormField v-slot="{ componentField }" name="usability">
-                        <FormItem>
-                            <FormLabel>Usability (kWh)</FormLabel>
-                            <FormControl>
-                                <Input type="number" step="0.01" min="0" placeholder="Enter usability in kWh" v-bind="componentField" />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    </FormField>
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium">Building</label>
+                    <Select v-model="form.building_id">
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select building" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem v-for="building in buildings" :key="building.id" :value="building.id">
+                                {{ building.name }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <div v-if="form.errors.building_id" class="text-sm text-red-500">{{ form.errors.building_id }}</div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium">Usability (kWh)</label>
+                    <Input type="number" step="0.01" min="0" placeholder="Enter usability in kWh" v-model="form.usability" />
+                    <div v-if="form.errors.usability" class="text-sm text-red-500">{{ form.errors.usability }}</div>
                 </div>
 
                 <DialogFooter>
-                    <Button type="button" variant="outline" @click="onClose" :disabled="isSubmitting"> Cancel </Button>
-                    <Button type="submit" :disabled="isSubmitting">
-                        {{ isSubmitting ? 'Creating...' : 'Create Bill' }}
+                    <Button type="button" variant="outline" @click="onClose" :disabled="form.processing"> Cancel </Button>
+                    <Button type="submit" :disabled="form.processing">
+                        {{ form.processing ? 'Creating...' : 'Create Bill' }}
                     </Button>
                 </DialogFooter>
             </form>

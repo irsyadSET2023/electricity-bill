@@ -35,8 +35,9 @@ class BillController extends Controller
      */
     public function store(StoreBillRequest $request, StoreBillAction $action)
     {
-        $response = $action->handle($request->validate());
-        return Inertia::render('bill/Index', $response);
+        $response = $action->handle($request->validated());
+
+        return back()->with('success', 'Bill created successfully');
     }
 
     /**
