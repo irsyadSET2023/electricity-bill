@@ -12,7 +12,9 @@ import debounce from 'lodash/debounce';
 import { MoreVerticalIcon, Plus } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 import BuildingDetailsModal from './partial/BuildingDetailsModal.vue';
+import ConfirmDialog from './partial/ConfirmDialog.vue';
 import StoreBuildingModal from './partial/StoreBuildingModal.vue';
+import UpdateBuildingModal from './partial/UpdateBuildingModal.vue';
 
 interface Building {
     id: string;
@@ -61,7 +63,10 @@ const sortBy = ref(props.filters.sort_by || 'name');
 const sortOrder = ref(props.filters.sort_order || 'asc');
 const showCreateModal = ref(false);
 const showDetailsModal = ref(false);
+const showUpdateModal = ref(false);
 const selectedBuilding = ref<Building | null>(null);
+const showDeleteConfirmDialog = ref(false);
+const buildingToDelete = ref<Building | null>(null);
 
 // Debounced search function
 const debouncedSearch = debounce((value: string) => {
@@ -92,11 +97,24 @@ const viewBuildingDetails = (building: Building) => {
 };
 
 const editBuilding = (building: Building) => {
-    console.log('Edit building:', building);
+    selectedBuilding.value = building;
+    showUpdateModal.value = true;
 };
 
 const deleteBuilding = (building: Building) => {
-    console.log('Delete building:', building);
+    buildingToDelete.value = building;
+    showDeleteConfirmDialog.value = true;
+};
+
+const handleDeleteConfirm = () => {
+    if (!buildingToDelete.value) return;
+
+    router.delete(`/buildings/${buildingToDelete.value.id}`, {
+        onSuccess: () => {
+            buildingToDelete.value = null;
+            showDeleteConfirmDialog.value = false;
+        },
+    });
 };
 
 // Handle sort changes
@@ -244,4 +262,11 @@ const totalPages = computed(() => props.buildings.last_page);
 
     <StoreBuildingModal v-model:show="showCreateModal" />
     <BuildingDetailsModal v-model:show="showDetailsModal" :building="selectedBuilding" />
+    <UpdateBuildingModal v-model:show="showUpdateModal" :building="selectedBuilding" />
+    <ConfirmDialog
+        v-model:open="showDeleteConfirmDialog"
+        title="Delete Building"
+        description="Are you sure you want to delete this building? This action cannot be undone."
+        @confirm="handleDeleteConfirm"
+    />
 </template>

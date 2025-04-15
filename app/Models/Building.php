@@ -64,4 +64,9 @@ class Building extends Model
     {
         return $this->hasMany(Bill::class);
     }
+
+    public function getRouteKeyName()
+    {
+        return 'id';
+    }
 }

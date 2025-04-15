@@ -8,11 +8,15 @@ use Illuminate\Http\Request;
 final class GetBillsAction
 {
     private const RESIDENTIAL_FIRST_BLOCK_LIMIT = 200;
+
     private const COMMERCIAL_FIRST_BLOCK_LIMIT = 200;
-    
+
     private const RESIDENTIAL_FIRST_BLOCK_RATE = 0.45;
+
     private const RESIDENTIAL_SECOND_BLOCK_RATE = 0.97;
+
     private const COMMERCIAL_FIRST_BLOCK_RATE = 0.89;
+
     private const COMMERCIAL_SECOND_BLOCK_RATE = 1.13;
 
     public function handle(Request $request): array
@@ -66,7 +70,7 @@ final class GetBillsAction
 
         // Get paginated results
         $bills = $query->paginate(10)->withQueryString();
-  
+
         return [
             'bills' => $bills->through(fn (Bill $bill) => [
                 'id' => $bill->id,
@@ -92,8 +96,8 @@ final class GetBillsAction
                 'sort_order' => $sortOrder,
                 'building_type' => $request->input('building_type', ''),
                 'month' => $request->input('month', ''),
-                'state' => $request->input('state', '')
-            ]
+                'state' => $request->input('state', ''),
+            ],
         ];
     }
 

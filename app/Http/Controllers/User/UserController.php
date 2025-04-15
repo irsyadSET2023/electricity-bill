@@ -14,9 +14,10 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request, GetUsersAction $action):Response
+    public function index(Request $request, GetUsersAction $action): Response
     {
         $data = $action->handle($request);
+
         return Inertia::render('user/Index', $data);
     }
 

@@ -5,12 +5,12 @@ namespace App\Actions\Building;
 use App\Models\Building;
 use Illuminate\Support\Facades\Log;
 
-final class StoreBuildingAction
+final class DeleteBuildingAction
 {
-    public function handle(array $data): void
+    public function handle(Building $building): void
     {
         try {
-            Building::create($data);
+            $building->delete();
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
 

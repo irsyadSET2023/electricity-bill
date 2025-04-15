@@ -22,6 +22,7 @@ class BillController extends Controller
     public function index(Request $request, GetBillsAction $action): Response
     {
         $response = $action->handle($request);
+
         return Inertia::render('bill/Index', $response);
     }
 
@@ -54,11 +55,7 @@ class BillController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit()
-    {
-
-       
-    }
+    public function edit() {}
 
     /**
      * Update the specified resource in storage.

@@ -16,6 +16,12 @@ interface Building {
         name: string;
         email: string;
     };
+    bills_summary: {
+        total_bills: number;
+        total_usage: number;
+        total_amount: number;
+        latest_bill_month: string | null;
+    };
 }
 
 const props = defineProps<{
@@ -93,6 +99,35 @@ const formattedDate = computed(() => {
                                 <TableRow>
                                     <TableHead>Email</TableHead>
                                     <TableCell>{{ building.owner.email }}</TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
+
+                <!-- Bills Summary -->
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Bills Summary</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableBody>
+                                <TableRow>
+                                    <TableHead class="w-[200px]">Total Bills</TableHead>
+                                    <TableCell>{{ building.bills_summary.total_bills }}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>Total Usage</TableHead>
+                                    <TableCell>{{ building.bills_summary.total_usage }} kWh</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>Total Amount</TableHead>
+                                    <TableCell>RM {{ building.bills_summary.total_amount.toFixed(2) }}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>Latest Bill Month</TableHead>
+                                    <TableCell>{{ building.bills_summary.latest_bill_month || 'No bills yet' }}</TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>
