@@ -35,7 +35,7 @@ const months = [
 ];
 
 const buildingTypes = [
-    { value: 'Residential', label: 'Residential' },
+    { value: 'Resedential', label: 'Resedential' },
     { value: 'Commercial', label: 'Commercial' },
 ];
 

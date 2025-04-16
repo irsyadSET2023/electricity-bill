@@ -12,12 +12,10 @@ final class StoreBillAction
         try {
             activity()->log('Bill created', [
                 'bill' => $data,
-            ])->log($data['building_id'] . ' Bill created')->causedBy(auth()->user());
+            ])->causedBy(auth()->user());
             Bill::create($data);
-
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
-
         }
     }
 }
