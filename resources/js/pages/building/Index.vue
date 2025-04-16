@@ -11,6 +11,7 @@ import { Head, router } from '@inertiajs/vue3';
 import debounce from 'lodash/debounce';
 import { MoreVerticalIcon, Plus } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
+import { toast } from 'vue-sonner';
 import BuildingDetailsModal from './partial/BuildingDetailsModal.vue';
 import ConfirmDialog from './partial/ConfirmDialog.vue';
 import StoreBuildingModal from './partial/StoreBuildingModal.vue';
@@ -111,6 +112,7 @@ const handleDeleteConfirm = () => {
 
     router.delete(`/buildings/${buildingToDelete.value.id}`, {
         onSuccess: () => {
+            toast.success('Success', { description: 'Success Deleting the Building' });
             buildingToDelete.value = null;
             showDeleteConfirmDialog.value = false;
         },

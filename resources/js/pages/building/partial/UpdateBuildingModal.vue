@@ -76,20 +76,12 @@ const handleConfirmedSubmit = () => {
     form.put(route('buildings.update', props.building.id), {
         preserveScroll: true,
         onSuccess: () => {
-            toast({
-                title: 'Success',
-                description: 'Building updated successfully',
-                duration: 3000,
-            });
+            toast.success('Success', { description: 'Successfully Updating the Store' });
+
             onClose();
         },
         onError: (errors) => {
-            toast({
-                title: 'Error',
-                description: 'Please check the form for errors',
-                variant: 'destructive',
-                duration: 3000,
-            });
+            toast.error('Error', { description: 'Error Updating the Store' });
         },
     });
 };

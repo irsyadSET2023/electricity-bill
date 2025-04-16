@@ -54,20 +54,11 @@ const handleConfirmedSubmit = () => {
     form.post(route('bills.store'), {
         preserveScroll: true,
         onSuccess: () => {
-            toast({
-                title: 'Success',
-                description: 'Bill created successfully',
-                duration: 3000,
-            });
+            toast.success('Success', { description: 'Successfully Creating the Bill' });
             onClose();
         },
         onError: (errors) => {
-            toast({
-                title: 'Error',
-                description: 'Please check the form for errors',
-                variant: 'destructive',
-                duration: 3000,
-            });
+            toast.error('Error', { description: 'Error Creating the Bill' });
         },
     });
 };
