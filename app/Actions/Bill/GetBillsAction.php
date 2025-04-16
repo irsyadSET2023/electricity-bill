@@ -2,6 +2,7 @@
 
 namespace App\Actions\Bill;
 
+use App\Enums\BuildingType;
 use App\Models\Bill;
 use Illuminate\Http\Request;
 
@@ -73,7 +74,7 @@ final class GetBillsAction
         $bills = $query->paginate(10)->withQueryString();
 
         return [
-            'bills' => $bills->through(fn (Bill $bill) => [
+            'bills' => $bills->through(fn(Bill $bill) => [
                 'id' => $bill->id,
                 'month' => $bill->month,
                 'usability' => $bill->usability,
@@ -104,7 +105,7 @@ final class GetBillsAction
 
     private function calculateBillAmount(float $usability, string $buildingType): float
     {
-        if ($buildingType === 'residential') {
+        if ($buildingType === BuildingType::RESIDENTIAL) {
             if ($usability <= self::RESIDENTIAL_FIRST_BLOCK_LIMIT) {
                 return $usability * self::RESIDENTIAL_FIRST_BLOCK_RATE;
             }
