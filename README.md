@@ -70,6 +70,7 @@ A web application for calculating and managing electricity bills.
 
     ```bash
     php artisan serve
+    npm run dev
     php artisan queue:work
     ```
 
