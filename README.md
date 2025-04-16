@@ -1,25 +1,115 @@
-# Laravel + Vue Starter Kit
+# Electricity Bill Calculator
 
-## Introduction
+A web application for calculating and managing electricity bills.
 
-Our Vue starter kit provides a robust, modern starting point for building Laravel applications with a Vue frontend using [Inertia](https://inertiajs.com).
+## Features
 
-Inertia allows you to build modern, single-page Vue applications using classic server-side routing and controllers. This lets you enjoy the frontend power of Vue combined with the incredible backend productivity of Laravel and lightning-fast Vite compilation.
+- User authentication and authorization
+- Electricity bill calculation based on usage
+- Admin dashboard for user management
+- Historical bill tracking
+- [Add other key features of your application]
 
-This Vue starter kit utilizes Vue 3 and the Composition API, TypeScript, Tailwind, and the [shadcn-vue](https://www.shadcn-vue.com) component library.
+## Local Development Setup
 
-## Official Documentation
+### Prerequisites
 
-Documentation for all Laravel starter kits can be found on the [Laravel website](https://laravel.com/docs/starter-kits).
+- PHP 8.2 or higher
+- Composer (latest version)
+- Node.js v22.x
+- MySQL/MariaDB/PostgreSQL database server
+- Git
+
+### Installation Steps
+
+1. Clone the repository:
+
+    ```bash
+    git clone [your-repository-url]
+    cd electricity-bill-calculator
+    ```
+
+2. Install PHP dependencies:
+
+    ```bash
+    composer install
+    ```
+
+3. Install Node.js dependencies:
+
+    ```bash
+    npm install
+    ```
+
+4. Configure your environment:
+
+    ```bash
+    cp .env.example .env
+    php artisan key:generate
+    ```
+
+5. Set up your database credentials in `.env` file:
+
+    ```
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=your_database_name
+    DB_USERNAME=your_username
+    DB_PASSWORD=your_password
+    ```
+
+6. Set up the database:
+
+    ```bash
+    php artisan migrate
+    php artisan db:seed
+    ```
+
+7. Start the development server:
+
+    ```bash
+    php artisan serve
+    ```
+
+8. In a separate terminal, compile assets:
+    ```bash
+    npm run dev
+    ```
+
+### Default Admin Access
+
+You can log in to the application using these credentials:
+
+- Email: `superadmin@example.com`
+- Password: `abcd1234`
+
+**Note:** It's recommended to change these credentials in production.
+
+## Testing
+
+Run the test suite:
+
+```bash
+php artisan test
+```
+
+## Deployment
+
+[Add deployment instructions specific to your setup]
 
 ## Contributing
 
-Thank you for considering contributing to our starter kit! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-The Laravel + Vue starter kit is open-sourced software licensed under the MIT license.
+[Add your license information]
+
+## Support
+
+[Add support contact information or links]

@@ -22,7 +22,8 @@ final class GetBillsAction
     public function handle(Request $request): array
     {
         $query = Bill::query()
-            ->with(['building.user']); // Eager load building and its user relationship
+            ->with(['building.user'])
+            ->has('building'); // Eager load building and its user relationship
 
         // Apply search filter
         if ($search = $request->input('search')) {
