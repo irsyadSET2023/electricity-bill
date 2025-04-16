@@ -105,7 +105,9 @@ final class GetBillsAction
 
     private function calculateBillAmount(float $usability, string $buildingType): float
     {
-        if ($buildingType === BuildingType::RESIDENTIAL) {
+
+        if ($buildingType === BuildingType::RESIDENTIAL->value) {
+
             if ($usability <= self::RESIDENTIAL_FIRST_BLOCK_LIMIT) {
                 return $usability * self::RESIDENTIAL_FIRST_BLOCK_RATE;
             }
