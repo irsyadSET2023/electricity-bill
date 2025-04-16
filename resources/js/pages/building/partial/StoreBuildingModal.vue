@@ -62,12 +62,7 @@ const fetchUsers = async () => {
         const response = await fetch(route('users.simple'));
         users.value = await response.json();
     } catch (error) {
-        toast({
-            title: 'Error',
-            description: 'Failed to fetch users',
-            variant: 'destructive',
-            duration: 3000,
-        });
+        toast.error('Error', { description: 'Failed to fetch user' });
     }
 };
 
@@ -80,20 +75,11 @@ const onSubmit = () => {
     form.post(route('buildings.store'), {
         preserveScroll: true,
         onSuccess: () => {
-            toast({
-                title: 'Success',
-                description: 'Building created successfully',
-                duration: 3000,
-            });
+            toast.success('Success', { description: 'Successfully Creating the Building' });
             onClose();
         },
         onError: (errors) => {
-            toast({
-                title: 'Error',
-                description: 'Please check the form for errors',
-                variant: 'destructive',
-                duration: 3000,
-            });
+            toast.error('Error', { description: 'Error Creating the Building' });
         },
     });
 };

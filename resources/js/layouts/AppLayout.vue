@@ -12,8 +12,8 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
+    <Toaster />
     <AppLayout :breadcrumbs="breadcrumbs">
-        <Toaster />
         <slot />
     </AppLayout>
 </template>

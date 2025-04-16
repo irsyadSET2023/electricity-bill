@@ -244,11 +244,7 @@ const confirmDeleteBill = () => {
             billToDelete.value = null;
         },
     });
-    toast({
-        title: 'Bill deleted successfully',
-        description: 'The bill has been deleted successfully',
-        duration: 3000,
-    });
+    toast.success('Success', { description: 'Success Deleting the Bill' });
 };
 
 // Computed properties

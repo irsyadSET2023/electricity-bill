@@ -75,20 +75,12 @@ const handleConfirmedSubmit = () => {
     form.put(route('bills.update', props.bill.id), {
         preserveScroll: true,
         onSuccess: () => {
-            toast({
-                title: 'Success',
-                description: 'Bill updated successfully',
-                duration: 3000,
-            });
+            toast.success('Success', { description: 'Successfully Updating the Bill' });
+
             onClose();
         },
         onError: (errors) => {
-            toast({
-                title: 'Error',
-                description: 'Please check the form for errors',
-                variant: 'destructive',
-                duration: 3000,
-            });
+            toast.error('Error', { description: 'Error Updating the Bill' });
         },
     });
 };
