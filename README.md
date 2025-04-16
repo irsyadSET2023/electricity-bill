@@ -84,7 +84,7 @@ You can log in to the application using these credentials:
 - Email: `superadmin@example.com`
 - Password: `abcd1234`
 
-**Note:** It's recommended to change these credentials in production.
+**Note:** It's recommended to change these credentials in production Furthermore, I use postgresql database in production you may try other database if any bugs can report to me.
 
 ## Testing
 
