@@ -70,6 +70,7 @@ A web application for calculating and managing electricity bills.
 
     ```bash
     php artisan serve
+    php artisan queue:work
     ```
 
 8. In a separate terminal, compile assets:
